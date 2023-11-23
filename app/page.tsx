@@ -171,16 +171,16 @@ export default function Home() {
 
   return (
     <main className='w-100 h-screen bg-slate-100 text-black'>
-      <header className='bg-amber-500 h-fit p-2 ps-20'>
+      <header className='bg-green-500 h-fit p-3 ps-20'>
         <Link href={'/'}>
-          <h1 className='text-white text-4xl font-bold border border-black inline px-4'>
+          <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
             Toodle<span className='text-slate-700'>Doo.</span>
           </h1>
         </Link>
       </header>
 
-      <div className='flex lg:flex-row flex-col-reverse lg:justify-between justify-center lg:items-start items-center'>
-        <div className='lg:w-7/12 flex flex-col justify-center items-center m-0 p-5 border'>
+      <div className='flex lg:flex-row flex-col-reverse lg:justify-between justify-center lg:items-start items-center p-12'>
+        <div className='lg:w-7/12 flex flex-col justify-center items-center mx-10 p-5'>
           <div className='w-full'>
             {isLoading ? (
               <div>
@@ -230,17 +230,23 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='lg:w-5/12 flex flex-col justify-center items-center m-0 p-5 border'>
+        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center mx-7 p-9'>
           {isEditing ? (
-            <div>
-              <h3 className='text-center text-lg font-semibold'>
-                Edit To-Do
-              </h3>
+            <div className='text-gray-500'>
+              <h3 className='text-3xl font-semibold mb-3'>Edit To-Do</h3>
 
-              <label htmlFor=''>Title</label>
+              <label
+                htmlFor='title'
+                className='text-lg'>
+                Title
+              </label>
+
               <input
+                id='title'
+                name='title'
                 type='text'
-                className='w-full lg:8/12 border border-gray-500 p-2 text-md rounded-md text-gray-500 outline-none my-2'
+                required
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
                 value={toBeEdited.title}
                 onChange={(event) =>
                   setToBeEdited({
@@ -250,11 +256,16 @@ export default function Home() {
                 }
               />
 
-              <label htmlFor=''>Description</label>
+              <label
+                htmlFor='description'
+                className='text-lg'>
+                Description
+              </label>
+
               <textarea
-                name=''
-                id=''
-                className='w-full lg:8/12 border border-gray-500 p-2 text-sm rounded-md text-gray-500 outline-none my-2'
+                id='description'
+                name='description'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
                 value={toBeEdited.description!}
                 onChange={(event) =>
                   setToBeEdited({
@@ -264,45 +275,60 @@ export default function Home() {
                 }></textarea>
 
               <button
-                className='bg-green-500 px-3 py-2 rounded-md my-1 me-1 text-white text-md font-semibold uppercase'
+                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-1'
                 onClick={updateToDo}>
                 Save
               </button>
 
               <button
-                className='bg-red-500 px-3 py-2 rounded-md m-1 text-white text-md font-semibold uppercase'
+                className='bg-red-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-1 mx-3'
                 onClick={cancelUpdate}>
                 Cancel
               </button>
             </div>
           ) : (
-            <div>
-              <h3 className='text-center text-lg font-semibold'>
+            <div className='text-gray-500'>
+              <h3 className='text-3xl font-semibold mb-3'>
                 Add New To-Do
               </h3>
 
-              <label htmlFor=''>Title</label>
+              <label
+                htmlFor='title'
+                className='text-lg'>
+                Title
+              </label>
+
               <input
+                id='title'
+                name='title'
                 type='text'
-                className='w-full lg:8/12 border border-gray-500 p-2 text-md rounded-md text-gray-500 outline-none my-2'
+                required
+                placeholder='Enter a title for your to-do'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
 
-              <label htmlFor=''>Description</label>
+              <label
+                htmlFor='description'
+                className='text-lg'>
+                Description
+              </label>
+
               <textarea
-                name=''
-                id=''
-                className='w-full lg:8/12 border border-gray-500 p-2 text-sm rounded-md text-gray-500 outline-none my-2'
+                id='description'
+                name='description'
+                placeholder='Provide a short description, if needed'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
                 value={description}
                 onChange={(event) =>
                   setDescription(event.target.value)
                 }></textarea>
 
               <button
-                className='bg-blue-500 px-3 py-2 rounded-md my-1 text-white text-md font-semibold uppercase'
+                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-1'
                 onClick={createToDo}>
-                Add
+                Add To-Do
               </button>
             </div>
           )}
