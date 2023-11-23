@@ -30,6 +30,7 @@ export default function Home() {
   const createToDo = async () => {
     if (!title) {
       setError('Please provide a Title for your To-Do');
+      return;
     }
 
     const newToDo = { title, description };
@@ -64,6 +65,7 @@ export default function Home() {
   const updateToDo = async () => {
     if (!toBeEdited.title) {
       setError('Please provide a Title for your To-Do');
+      return;
     }
 
     const response = await fetch('/api/tasks', {
@@ -169,8 +171,17 @@ export default function Home() {
     setIsLoading(false);
   }, [allToDos]);
 
+  // Clear form data whenever there is an error
+  useEffect(() => {
+    setTimeout(() => {
+      setError('');
+      setTitle('');
+      setDescription('');
+    }, 3500);
+  }, [error]);
+
   return (
-    <main className='w-100 h-screen bg-slate-100 text-black'>
+    <main className='w-100  bg-slate-100 text-black'>
       <header className='bg-green-500 h-fit p-3 ps-20'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
@@ -274,8 +285,12 @@ export default function Home() {
                   })
                 }></textarea>
 
+              <div className='text-red-500'>
+                <p>{error ? error : null}</p>
+              </div>
+
               <button
-                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-1'
+                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
                 onClick={updateToDo}>
                 Save
               </button>
@@ -325,8 +340,12 @@ export default function Home() {
                   setDescription(event.target.value)
                 }></textarea>
 
+              <div className='text-red-500'>
+                <p>{error ? error : null}</p>
+              </div>
+
               <button
-                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-1'
+                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
                 onClick={createToDo}>
                 Add To-Do
               </button>
