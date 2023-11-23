@@ -141,6 +141,7 @@ export default function Home() {
     }
   };
 
+  // Mark To-Do as Completed or Pending
   const toggleToDo = async (markedTodo: ToDo) => {
     const response = await fetch('/api/tasks', {
       method: 'PATCH',
@@ -169,6 +170,14 @@ export default function Home() {
     }
   };
 
+  // Clear Complete Tasks
+  const clearCompleted = () => {
+    completedToDos.forEach((completedToDo) => {
+      deleteToDo(completedToDo.id);
+    });
+  };
+
+  // Fetch the To-Dos whenever there are changes in the list
   useEffect(() => {
     const getToDos = async () => {
       await fetch('/api/tasks')
@@ -195,7 +204,7 @@ export default function Home() {
     setIsLoading(false);
   }, [allToDos]);
 
-  // Clear form data whenever there is an error
+  // Clear the form data whenever there is an error
   useEffect(() => {
     setTimeout(() => {
       setError('');
@@ -228,6 +237,12 @@ export default function Home() {
               </div>
             ) : (
               <div>
+                {/* <h5
+                  className='text-teal-500 cursor-pointer inline-block mt-5 mb-3 px-5'
+                  onClick={clearCompleted}>
+                  Sort
+                </h5> */}
+
                 <section>
                   {pendingToDos.map((todo) => {
                     return (
@@ -270,6 +285,14 @@ export default function Home() {
                   })}
                 </section>
 
+                {completedToDos.length > 0 ? (
+                  <h5
+                    className='text-red-500 cursor-pointer inline-block mt-5 mb-3 px-5'
+                    onClick={clearCompleted}>
+                    Clear Completed
+                  </h5>
+                ) : null}
+
                 <section>
                   {completedToDos.map((todo) => {
                     return (
@@ -279,10 +302,9 @@ export default function Home() {
                         <div className='flex justify-around mt-3 mb-2'>
                           <input
                             type='checkbox'
-                            className='w-6 h-8 ms-2 me-4'
+                            className='w-6 h-8 ms-2 me-4 accent-teal-400'
                             checked={todo.completed}
                             onChange={() => toggleToDo(todo)}
-                            disabled
                           />
 
                           <div className='select-none'>
