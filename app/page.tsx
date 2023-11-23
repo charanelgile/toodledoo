@@ -7,6 +7,7 @@ import {
   faTrashCan,
   faPenToSquare,
 } from '@fortawesome/free-regular-svg-icons';
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 type ToDo = {
   id: number;
@@ -18,8 +19,12 @@ type ToDo = {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDescending, setIsDescending] = useState(true);
 
   const [allToDos, setAllToDos] = useState<ToDo[]>([]);
+  const [pendingToDos, setPendingToDos] = useState<ToDo[]>([]);
+  const [completedToDos, setCompletedToDos] = useState<ToDo[]>([]);
+
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
@@ -30,11 +35,9 @@ export default function Home() {
     completed: false,
   });
 
-  const [pendingToDos, setPendingToDos] = useState<ToDo[]>([]);
-  const [completedToDos, setCompletedToDos] = useState<ToDo[]>([]);
-
   const [error, setError] = useState<string>('');
 
+  // Create To-Do - Add new to-do entry
   const createToDo = async () => {
     if (!title) {
       setError('Please provide a Title for your To-Do');
@@ -53,14 +56,13 @@ export default function Home() {
 
     const data = await response.json();
 
-    // console.log(data);
-
     setAllToDos([...allToDos, data]);
 
     setTitle('');
     setDescription('');
   };
 
+  // Edit To-Do - Change details of existing to-do entry
   const editToDo = (todo: ToDo) => {
     setIsEditing(true);
 
@@ -72,6 +74,7 @@ export default function Home() {
     });
   };
 
+  // Update To-Do - Send the changes to the backend and the database
   const updateToDo = async () => {
     if (!toBeEdited.title) {
       setError('Please provide a Title for your To-Do');
@@ -116,6 +119,7 @@ export default function Home() {
     }
   };
 
+  // Cancel Update - Cancel the process of editing a to-do entry
   const cancelUpdate = () => {
     setToBeEdited({
       id: 0,
@@ -127,6 +131,7 @@ export default function Home() {
     setIsEditing(false);
   };
 
+  // Delete To-Do - Remove a to-do entry from the database
   const deleteToDo = async (id: number) => {
     const response = await fetch('/api/tasks', {
       method: 'DELETE',
@@ -141,7 +146,7 @@ export default function Home() {
     }
   };
 
-  // Mark To-Do as Completed or Pending
+  // Toggle To-Do - Mark to-do entry as "Completed" or "Pending"
   const toggleToDo = async (markedTodo: ToDo) => {
     const response = await fetch('/api/tasks', {
       method: 'PATCH',
@@ -170,11 +175,20 @@ export default function Home() {
     }
   };
 
-  // Clear Complete Tasks
+  // Clear Complete - Remove all completed to-do entries from the database
   const clearCompleted = () => {
     completedToDos.forEach((completedToDo) => {
       deleteToDo(completedToDo.id);
     });
+  };
+
+  // Trigger Sorting of Pending To-Dos
+  const sortPendings = () => {
+    if (isDescending) {
+      setIsDescending(false);
+    } else {
+      setIsDescending(true);
+    }
   };
 
   // Fetch the To-Dos whenever there are changes in the list
@@ -189,20 +203,30 @@ export default function Home() {
     // Get All To-Dos
     getToDos();
 
-    // Isolate the Pending To-Dos ...
-    setPendingToDos(
-      allToDos
-        .filter((todo: ToDo) => todo.completed === false)
-        .sort((a, b) => b.id - a.id)
-    );
+    // Isolate the Pending To-Dos
+    if (isDescending) {
+      // Sort them in Descending Order
+      setPendingToDos(
+        allToDos
+          .filter((todo: ToDo) => todo.completed === false)
+          .sort((a, b) => b.id - a.id)
+      );
+    } else {
+      // Sort them in Ascending Order
+      setPendingToDos(
+        allToDos
+          .filter((todo: ToDo) => todo.completed === false)
+          .sort((a, b) => a.id - b.id)
+      );
+    }
 
-    // ... from the Completed To-Dos
+    // Isolate the Completed To-Dos
     setCompletedToDos(
       allToDos.filter((todo: ToDo) => todo.completed === true)
     );
 
     setIsLoading(false);
-  }, [allToDos]);
+  }, [allToDos, isDescending]);
 
   // Clear the form data whenever there is an error
   useEffect(() => {
@@ -214,7 +238,7 @@ export default function Home() {
   }, [error]);
 
   return (
-    <main className='w-100  bg-slate-100 text-black'>
+    <main className='w-100 lg:h-100 md:h-fit bg-slate-100 text-black'>
       <header className='bg-teal-500 h-fit p-3 ps-20'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
@@ -237,11 +261,26 @@ export default function Home() {
               </div>
             ) : (
               <div>
-                {/* <h5
-                  className='text-teal-500 cursor-pointer inline-block mt-5 mb-3 px-5'
-                  onClick={clearCompleted}>
-                  Sort
-                </h5> */}
+                <div className='w-full flex justify-between'>
+                  <h5
+                    className='text-teal-500 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
+                    onClick={sortPendings}>
+                    Sort&nbsp;&nbsp;
+                    {isDescending ? (
+                      <FontAwesomeIcon icon={faArrowDown} />
+                    ) : (
+                      <FontAwesomeIcon icon={faArrowUp} />
+                    )}
+                  </h5>
+
+                  {completedToDos.length > 0 ? (
+                    <h5
+                      className='text-red-500 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
+                      onClick={clearCompleted}>
+                      Clear Completed
+                    </h5>
+                  ) : null}
+                </div>
 
                 <section>
                   {pendingToDos.map((todo) => {
@@ -287,7 +326,7 @@ export default function Home() {
 
                 {completedToDos.length > 0 ? (
                   <h5
-                    className='text-red-500 cursor-pointer inline-block mt-5 mb-3 px-5'
+                    className='text-red-500 text-lg font-medium cursor-pointer inline-block mt-5 mb-3 px-5'
                     onClick={clearCompleted}>
                     Clear Completed
                   </h5>
@@ -362,7 +401,7 @@ export default function Home() {
               <textarea
                 id='description'
                 name='description'
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none resize-none py-2 px-3 my-2'
                 value={toBeEdited.description!}
                 onChange={(event) =>
                   setToBeEdited({
@@ -420,7 +459,7 @@ export default function Home() {
                 id='description'
                 name='description'
                 placeholder='Provide a short description, if needed'
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none resize-none py-2 px-3 my-2'
                 value={description}
                 onChange={(event) =>
                   setDescription(event.target.value)
