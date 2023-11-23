@@ -1,7 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faTrashCan,
+  faPenToSquare,
+} from '@fortawesome/free-regular-svg-icons';
 
 type ToDo = {
   id: number;
@@ -25,6 +30,9 @@ export default function Home() {
     completed: false,
   });
 
+  const [pendingToDos, setPendingToDos] = useState<ToDo[]>([]);
+  const [completedToDos, setCompletedToDos] = useState<ToDo[]>([]);
+
   const [error, setError] = useState<string>('');
 
   const createToDo = async () => {
@@ -44,6 +52,8 @@ export default function Home() {
     });
 
     const data = await response.json();
+
+    // console.log(data);
 
     setAllToDos([...allToDos, data]);
 
@@ -167,7 +177,21 @@ export default function Home() {
         .catch((error) => console.log(error));
     };
 
+    // Get All To-Dos
     getToDos();
+
+    // Isolate the Pending To-Dos ...
+    setPendingToDos(
+      allToDos
+        .filter((todo: ToDo) => todo.completed === false)
+        .sort((a, b) => b.id - a.id)
+    );
+
+    // ... from the Completed To-Dos
+    setCompletedToDos(
+      allToDos.filter((todo: ToDo) => todo.completed === true)
+    );
+
     setIsLoading(false);
   }, [allToDos]);
 
@@ -182,69 +206,109 @@ export default function Home() {
 
   return (
     <main className='w-100  bg-slate-100 text-black'>
-      <header className='bg-green-500 h-fit p-3 ps-20'>
+      <header className='bg-teal-500 h-fit p-3 ps-20'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
-            Toodle<span className='text-slate-700'>Doo.</span>
+            Toodle<span className='text-gray-700'>Doo.</span>
           </h1>
         </Link>
       </header>
 
       <div className='flex lg:flex-row flex-col-reverse lg:justify-between justify-center lg:items-start items-center p-12'>
-        <div className='lg:w-7/12 flex flex-col justify-center items-center mx-10 p-5'>
+        <div className='lg:w-7/12 md:w-3/4 flex flex-col justify-center items-center md:px-0 lg:px-5 mx-10 md:mt-10 lg:mt-0'>
           <div className='w-full'>
-            {isLoading ? (
+            {isLoading &&
+            allToDos.length === 0 &&
+            pendingToDos.length === 0 &&
+            completedToDos.length === 0 ? (
               <div>
-                <h3 className='text-center text-2xl font-semibold my-2'>
-                  Loading your to-dos...
+                <h3 className='text-gray-500 text-center text-2xl font-semibold my-2'>
+                  Loading your To-Dos...
                 </h3>
               </div>
             ) : (
-              allToDos.map((todo) => {
-                return (
-                  <div
-                    key={todo.id}
-                    className='flex items-center justify-between'>
-                    <div className='flex justify-around mt-3 mb-2'>
-                      <input
-                        type='checkbox'
-                        className='w-4 h-5 mx-2 mt-1'
-                        checked={todo.completed}
-                        onChange={() => toggleToDo(todo)}
-                      />
+              <div>
+                <section>
+                  {pendingToDos.map((todo) => {
+                    return (
+                      <div
+                        key={todo.id}
+                        className='flex items-center justify-between bg-white shadow-md rounded-md mb-3 p-3'>
+                        <div className='flex justify-around mt-3 mb-2'>
+                          <input
+                            type='checkbox'
+                            className='w-6 h-8 ms-2 me-4'
+                            checked={todo.completed}
+                            onChange={() => toggleToDo(todo)}
+                          />
 
-                      <div>
-                        <h4 className='text-lg font-semibold'>
-                          {todo.title}
-                        </h4>
-                        <p>{todo.description}</p>
+                          <div>
+                            <h4 className='text-gray-700 text-lg font-semibold'>
+                              {todo.title}
+                            </h4>
+                            <p className='text-gray-500'>
+                              {todo.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className='flex items-center m-0'>
+                          <button
+                            className='bg-teal-500 px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase'
+                            onClick={() => editToDo(todo)}>
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                          </button>
+
+                          <button
+                            className='bg-red-500 px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase'
+                            onClick={() => deleteToDo(todo.id)}>
+                            <FontAwesomeIcon icon={faTrashCan} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    );
+                  })}
+                </section>
 
-                    <div className='flex items-center m-0'>
-                      <button
-                        className='bg-green-500 px-3 py-2 rounded-md mx-1 text-white text-md font-semibold uppercase'
-                        onClick={() => editToDo(todo)}>
-                        Update
-                      </button>
+                <section>
+                  {completedToDos.map((todo) => {
+                    return (
+                      <div
+                        key={todo.id}
+                        className='flex items-center justify-between bg-white shadow-sm rounded-md mb-1 p-3'>
+                        <div className='flex justify-around mt-3 mb-2'>
+                          <input
+                            type='checkbox'
+                            className='w-6 h-8 ms-2 me-4'
+                            checked={todo.completed}
+                            onChange={() => toggleToDo(todo)}
+                            disabled
+                          />
 
-                      <button
-                        className='bg-red-500 px-3 py-2 rounded-md mx-1 text-white text-md font-semibold uppercase'
-                        onClick={() => deleteToDo(todo.id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
+                          <div className='select-none'>
+                            <h4 className='text-gray-400 text-lg font-semibold line-through'>
+                              {todo.title}
+                            </h4>
+                            <p className='text-gray-300'>
+                              {todo.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </section>
+              </div>
             )}
           </div>
         </div>
 
-        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center mx-7 p-9'>
+        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-7 p-9'>
           {isEditing ? (
             <div className='text-gray-500'>
-              <h3 className='text-3xl font-semibold mb-3'>Edit To-Do</h3>
+              <h3 className='text-gray-700 text-3xl font-semibold mb-3'>
+                Edit To-Do
+              </h3>
 
               <label
                 htmlFor='title'
@@ -290,7 +354,7 @@ export default function Home() {
               </div>
 
               <button
-                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
+                className='bg-teal-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
                 onClick={updateToDo}>
                 Save
               </button>
@@ -303,7 +367,7 @@ export default function Home() {
             </div>
           ) : (
             <div className='text-gray-500'>
-              <h3 className='text-3xl font-semibold mb-3'>
+              <h3 className='text-gray-700 text-3xl font-semibold mb-3'>
                 Add New To-Do
               </h3>
 
@@ -345,7 +409,7 @@ export default function Home() {
               </div>
 
               <button
-                className='bg-green-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
+                className='bg-teal-500 text-white text-md font-semibold uppercase rounded-sm px-5 py-2 my-3'
                 onClick={createToDo}>
                 Add To-Do
               </button>
