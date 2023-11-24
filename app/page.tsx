@@ -438,7 +438,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-1 md:mx-7 p-9'>
+        <div
+          id='frmToDo'
+          className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-1 md:mx-7 p-9'>
           {isEditing ? (
             <div className='text-gray-500'>
               <h3 className='text-gray-700 text-3xl font-semibold mb-3'>
@@ -456,7 +458,7 @@ export default function Home() {
                 name='title'
                 type='text'
                 required
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none focus:ring-2 ring-teal-500 ring-inset py-2 px-3 my-2'
                 value={toBeEdited.title}
                 onChange={(event) =>
                   setToBeEdited({
@@ -475,7 +477,7 @@ export default function Home() {
               <textarea
                 id='description'
                 name='description'
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none resize-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none focus:ring-2 ring-teal-500 ring-inset resize-none py-2 px-3 my-2'
                 value={toBeEdited.description!}
                 onChange={(event) =>
                   setToBeEdited({
@@ -518,7 +520,7 @@ export default function Home() {
                 type='text'
                 required
                 placeholder='Enter a title for your to-do'
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none focus:ring-2 ring-teal-500 ring-inset py-2 px-3 my-2'
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
@@ -533,7 +535,7 @@ export default function Home() {
                 id='description'
                 name='description'
                 placeholder='Provide a short description, if needed'
-                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none resize-none py-2 px-3 my-2'
+                className='w-full text-gray-700 text-md border border-gray-400 rounded-sm outline-none focus:ring-2 ring-teal-500 ring-inset resize-none py-2 px-3 my-2'
                 value={description}
                 onChange={(event) =>
                   setDescription(event.target.value)
