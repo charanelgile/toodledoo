@@ -69,6 +69,14 @@ export default function Home() {
   // For Error Messages
   const [error, setError] = useState<string>('');
 
+  // Get All To-Dos
+  const getToDos = async () => {
+    await fetch(`/api/tasks`)
+      .then((response) => response.json())
+      .then((data) => setAllToDos(data.allToDos))
+      .catch((error) => console.log(error));
+  };
+
   // Create To-Do - Add new to-do entry
   const createToDo = async () => {
     if (!title) {
@@ -228,19 +236,11 @@ export default function Home() {
 
   // Fetch the To-Dos whenever there are changes in the list
   useEffect(() => {
-    const getToDos = async () => {
-      await fetch(`/api/tasks`)
-        .then((response) => response.json())
-        .then((data) => setAllToDos(data.allToDos))
-        .catch((error) => console.log(error));
-    };
-
-    // Get All To-Dos
     getToDos();
+  }, []);
 
-    if (allToDos.length === 0) {
-      setAllToDos(sampleToDos);
-    }
+  useEffect(() => {
+    getToDos();
 
     // Isolate the Pending To-Dos
     if (isDescending) {
@@ -303,136 +303,146 @@ export default function Home() {
               </div>
             ) : (
               <div>
-                <div className='w-full flex justify-between'>
-                  <h5
-                    className='text-gray-600 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
-                    onClick={sortPendings}>
-                    Sort&nbsp;&nbsp;
-                    {isDescending ? (
-                      <FontAwesomeIcon icon={faArrowDown} />
-                    ) : (
-                      <FontAwesomeIcon icon={faArrowUp} />
-                    )}
-                  </h5>
+                {allToDos.length === 0 ? (
+                  <div>
+                    <h3 className='text-gray-500 text-center text-2xl font-semibold my-2'>
+                      No To-Dos to display
+                    </h3>
+                  </div>
+                ) : (
+                  <div>
+                    <div className='w-full flex justify-between'>
+                      <h5
+                        className='text-gray-600 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
+                        onClick={sortPendings}>
+                        Sort&nbsp;&nbsp;
+                        {isDescending ? (
+                          <FontAwesomeIcon icon={faArrowDown} />
+                        ) : (
+                          <FontAwesomeIcon icon={faArrowUp} />
+                        )}
+                      </h5>
 
-                  {completedToDos.length > 0 ? (
-                    <h5
-                      className={`${
-                        isEditing
-                          ? 'pointer-events-none text-gray-400 '
-                          : 'text-red-500 '
-                      } text-lg font-medium cursor-pointer inline-block mb-3 px-5`}
-                      onClick={clearCompleted}>
-                      Clear Completed
-                    </h5>
-                  ) : null}
-                </div>
+                      {completedToDos.length > 0 ? (
+                        <h5
+                          className={`${
+                            isEditing
+                              ? 'pointer-events-none text-gray-400 '
+                              : 'text-red-500 '
+                          } text-lg font-medium cursor-pointer inline-block mb-3 px-5`}
+                          onClick={clearCompleted}>
+                          Clear Completed
+                        </h5>
+                      ) : null}
+                    </div>
 
-                <section>
-                  {pendingToDos.map((todo) => {
-                    return (
-                      <div
-                        key={todo.id}
-                        className='flex items-center justify-between bg-white shadow-md rounded-md mb-3 p-3'>
-                        <div className='flex justify-around mt-3 mb-2'>
-                          {isEditing ? (
-                            <input
-                              type='checkbox'
-                              className='w-6 h-8 ms-2 me-4'
-                              disabled
-                            />
-                          ) : (
-                            <input
-                              type='checkbox'
-                              className='w-6  h-8 ms-2 me-4'
-                              checked={todo.completed}
-                              onChange={() => toggleToDo(todo)}
-                            />
-                          )}
+                    <section>
+                      {pendingToDos.map((todo) => {
+                        return (
+                          <div
+                            key={todo.id}
+                            className='flex items-center justify-between bg-white shadow-md rounded-md mb-3 p-3'>
+                            <div className='flex justify-around mt-3 mb-2'>
+                              {isEditing ? (
+                                <input
+                                  type='checkbox'
+                                  className='w-6 h-8 ms-2 me-4'
+                                  disabled
+                                />
+                              ) : (
+                                <input
+                                  type='checkbox'
+                                  className='w-6  h-8 ms-2 me-4'
+                                  checked={todo.completed}
+                                  onChange={() => toggleToDo(todo)}
+                                />
+                              )}
 
-                          <div>
-                            <h4 className='text-gray-700 text-lg font-semibold'>
-                              {todo.title}
-                            </h4>
-                            <p className='text-gray-500'>
-                              {todo.description}
-                            </p>
+                              <div>
+                                <h4 className='text-gray-700 text-lg font-semibold'>
+                                  {todo.title}
+                                </h4>
+                                <p className='text-gray-500'>
+                                  {todo.description}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className='flex items-center m-0'>
+                              <button
+                                className={`${
+                                  isEditing
+                                    ? 'pointer-events-none bg-gray-300 '
+                                    : 'bg-teal-500 '
+                                } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
+                                onClick={() => editToDo(todo)}>
+                                <FontAwesomeIcon icon={faPenToSquare} />
+                              </button>
+
+                              <button
+                                className={`${
+                                  isEditing
+                                    ? 'pointer-events-none bg-gray-300 '
+                                    : 'bg-red-500 '
+                                } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
+                                onClick={() => deleteToDo(todo.id)}>
+                                <FontAwesomeIcon icon={faTrashCan} />
+                              </button>
+                            </div>
                           </div>
-                        </div>
+                        );
+                      })}
+                    </section>
 
-                        <div className='flex items-center m-0'>
-                          <button
-                            className={`${
-                              isEditing
-                                ? 'pointer-events-none bg-gray-300 '
-                                : 'bg-teal-500 '
-                            } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
-                            onClick={() => editToDo(todo)}>
-                            <FontAwesomeIcon icon={faPenToSquare} />
-                          </button>
+                    {completedToDos.length > 0 ? (
+                      <h5
+                        className={`${
+                          isEditing
+                            ? 'pointer-events-none text-gray-400 '
+                            : 'text-red-500 '
+                        } text-lg font-medium cursor-pointer inline-block mt-5 mb-3 px-5`}
+                        onClick={clearCompleted}>
+                        Clear Completed
+                      </h5>
+                    ) : null}
 
-                          <button
-                            className={`${
-                              isEditing
-                                ? 'pointer-events-none bg-gray-300 '
-                                : 'bg-red-500 '
-                            } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
-                            onClick={() => deleteToDo(todo.id)}>
-                            <FontAwesomeIcon icon={faTrashCan} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </section>
+                    <section>
+                      {completedToDos.map((todo) => {
+                        return (
+                          <div
+                            key={todo.id}
+                            className='flex items-center justify-between bg-white shadow-sm rounded-md mb-1 p-3'>
+                            <div className='flex justify-around mt-3 mb-2'>
+                              {isEditing ? (
+                                <input
+                                  type='checkbox'
+                                  className='w-6 h-8 ms-2 me-4'
+                                  disabled
+                                />
+                              ) : (
+                                <input
+                                  type='checkbox'
+                                  className='w-6  h-8 ms-2 me-4'
+                                  checked={todo.completed}
+                                  onChange={() => toggleToDo(todo)}
+                                />
+                              )}
 
-                {completedToDos.length > 0 ? (
-                  <h5
-                    className={`${
-                      isEditing
-                        ? 'pointer-events-none text-gray-400 '
-                        : 'text-red-500 '
-                    } text-lg font-medium cursor-pointer inline-block mt-5 mb-3 px-5`}
-                    onClick={clearCompleted}>
-                    Clear Completed
-                  </h5>
-                ) : null}
-
-                <section>
-                  {completedToDos.map((todo) => {
-                    return (
-                      <div
-                        key={todo.id}
-                        className='flex items-center justify-between bg-white shadow-sm rounded-md mb-1 p-3'>
-                        <div className='flex justify-around mt-3 mb-2'>
-                          {isEditing ? (
-                            <input
-                              type='checkbox'
-                              className='w-6 h-8 ms-2 me-4'
-                              disabled
-                            />
-                          ) : (
-                            <input
-                              type='checkbox'
-                              className='w-6  h-8 ms-2 me-4'
-                              checked={todo.completed}
-                              onChange={() => toggleToDo(todo)}
-                            />
-                          )}
-
-                          <div className='select-none'>
-                            <h4 className='text-gray-400 text-lg font-semibold line-through'>
-                              {todo.title}
-                            </h4>
-                            <p className='text-gray-300'>
-                              {todo.description}
-                            </p>
+                              <div className='select-none'>
+                                <h4 className='text-gray-400 text-lg font-semibold line-through'>
+                                  {todo.title}
+                                </h4>
+                                <p className='text-gray-300'>
+                                  {todo.description}
+                                </p>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </section>
+                        );
+                      })}
+                    </section>
+                  </div>
+                )}
               </div>
             )}
           </div>
