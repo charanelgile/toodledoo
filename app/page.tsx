@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { BASE_URL } from './baseURL';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,8 +16,6 @@ type ToDo = {
   description: string | null;
   completed: boolean;
 };
-
-const BASE_URL = process.env.NEXT_URL || 'http://localhost:3000';
 
 const sampleToDos = [
   {
