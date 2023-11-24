@@ -554,6 +554,14 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      <Link
+        href={'#frmTodo'}
+        className='contents lg:hidden'>
+        <button className='bg-teal-500 text-white text-3xl rounded-full fixed bottom-0 right-0 px-5 py-3 m-8'>
+          <FontAwesomeIcon icon={faArrowUp} />
+        </button>
+      </Link>
     </main>
   );
 }
