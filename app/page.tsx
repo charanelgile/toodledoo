@@ -98,6 +98,9 @@ export default function Home() {
   const editToDo = (todo: ToDo) => {
     setIsEditing(true);
 
+    setTitle('');
+    setDescription('');
+
     setToBeEdited({
       id: todo.id,
       title: todo.title,
@@ -302,7 +305,7 @@ export default function Home() {
               <div>
                 <div className='w-full flex justify-between'>
                   <h5
-                    className='text-teal-500 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
+                    className='text-gray-600 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
                     onClick={sortPendings}>
                     Sort&nbsp;&nbsp;
                     {isDescending ? (
@@ -314,7 +317,11 @@ export default function Home() {
 
                   {completedToDos.length > 0 ? (
                     <h5
-                      className='text-red-500 text-lg font-medium cursor-pointer inline-block mb-3 px-5'
+                      className={`${
+                        isEditing
+                          ? 'pointer-events-none text-gray-400 '
+                          : 'text-red-500 '
+                      } text-lg font-medium cursor-pointer inline-block mb-3 px-5`}
                       onClick={clearCompleted}>
                       Clear Completed
                     </h5>
@@ -328,12 +335,20 @@ export default function Home() {
                         key={todo.id}
                         className='flex items-center justify-between bg-white shadow-md rounded-md mb-3 p-3'>
                         <div className='flex justify-around mt-3 mb-2'>
-                          <input
-                            type='checkbox'
-                            className='w-6 h-8 ms-2 me-4'
-                            checked={todo.completed}
-                            onChange={() => toggleToDo(todo)}
-                          />
+                          {isEditing ? (
+                            <input
+                              type='checkbox'
+                              className='w-6 h-8 ms-2 me-4'
+                              disabled
+                            />
+                          ) : (
+                            <input
+                              type='checkbox'
+                              className='w-6  h-8 ms-2 me-4'
+                              checked={todo.completed}
+                              onChange={() => toggleToDo(todo)}
+                            />
+                          )}
 
                           <div>
                             <h4 className='text-gray-700 text-lg font-semibold'>
@@ -347,13 +362,21 @@ export default function Home() {
 
                         <div className='flex items-center m-0'>
                           <button
-                            className='bg-teal-500 px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase'
+                            className={`${
+                              isEditing
+                                ? 'pointer-events-none bg-gray-300 '
+                                : 'bg-teal-500 '
+                            } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
                             onClick={() => editToDo(todo)}>
                             <FontAwesomeIcon icon={faPenToSquare} />
                           </button>
 
                           <button
-                            className='bg-red-500 px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase'
+                            className={`${
+                              isEditing
+                                ? 'pointer-events-none bg-gray-300 '
+                                : 'bg-red-500 '
+                            } px-3 py-2 rounded-full mx-2 text-white text-xl font-semibold uppercase`}
                             onClick={() => deleteToDo(todo.id)}>
                             <FontAwesomeIcon icon={faTrashCan} />
                           </button>
@@ -365,7 +388,11 @@ export default function Home() {
 
                 {completedToDos.length > 0 ? (
                   <h5
-                    className='text-red-500 text-lg font-medium cursor-pointer inline-block mt-5 mb-3 px-5'
+                    className={`${
+                      isEditing
+                        ? 'pointer-events-none text-gray-400 '
+                        : 'text-red-500 '
+                    } text-lg font-medium cursor-pointer inline-block mt-5 mb-3 px-5`}
                     onClick={clearCompleted}>
                     Clear Completed
                   </h5>
@@ -378,12 +405,20 @@ export default function Home() {
                         key={todo.id}
                         className='flex items-center justify-between bg-white shadow-sm rounded-md mb-1 p-3'>
                         <div className='flex justify-around mt-3 mb-2'>
-                          <input
-                            type='checkbox'
-                            className='w-6 h-8 ms-2 me-4 accent-teal-400'
-                            checked={todo.completed}
-                            onChange={() => toggleToDo(todo)}
-                          />
+                          {isEditing ? (
+                            <input
+                              type='checkbox'
+                              className='w-6 h-8 ms-2 me-4'
+                              disabled
+                            />
+                          ) : (
+                            <input
+                              type='checkbox'
+                              className='w-6  h-8 ms-2 me-4'
+                              checked={todo.completed}
+                              onChange={() => toggleToDo(todo)}
+                            />
+                          )}
 
                           <div className='select-none'>
                             <h4 className='text-gray-400 text-lg font-semibold line-through'>
