@@ -69,7 +69,7 @@ export default function Home() {
   // For Error Messages
   const [error, setError] = useState<string>('');
 
-  // Get All To-Dos
+  // Get All To-Dos - Retrieve the list of to-dos from the database
   const getToDos = async () => {
     await fetch(`/api/tasks`)
       .then((response) => response.json())
@@ -234,11 +234,12 @@ export default function Home() {
     }
   };
 
-  // Fetch the To-Dos whenever there are changes in the list
+  // Get the List of To-Dos on initial page load
   useEffect(() => {
     getToDos();
   }, []);
 
+  // Get the List of To-Dos whenever there are changes in any of its items
   useEffect(() => {
     getToDos();
 
@@ -281,6 +282,7 @@ export default function Home() {
       className={`${
         allToDos.length > 5 ? 'lg:h-100' : 'lg:h-screen'
       } w-100 md:h-fit text-black`}>
+      {/* Header */}
       <header className='w-full flex justify-center lg:justify-start bg-teal-500 h-fit p-3 lg:ps-20 sm:ps-0'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
@@ -310,6 +312,7 @@ export default function Home() {
                     </h3>
                   </div>
                 ) : (
+                  // Sort and Clear Complete Buttons
                   <div>
                     <div className='w-full flex justify-between'>
                       <h5
@@ -336,6 +339,7 @@ export default function Home() {
                       ) : null}
                     </div>
 
+                    {/* Pending To-Dos */}
                     <section>
                       {pendingToDos.map((todo) => {
                         return (
@@ -406,6 +410,7 @@ export default function Home() {
                       </h5>
                     ) : null}
 
+                    {/* Completed To-Dos */}
                     <section>
                       {completedToDos.map((todo) => {
                         return (
@@ -448,6 +453,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Form for Editing To-Do */}
         <div
           id='frmToDo'
           className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-1 md:mx-7 p-9'>
@@ -513,6 +519,7 @@ export default function Home() {
               </button>
             </div>
           ) : (
+            // Form for Creating To-Do
             <div className='text-gray-500'>
               <h3 className='text-gray-700 text-3xl font-semibold mb-3'>
                 Add New To-Do
@@ -565,6 +572,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Floating Arrow Up - Go to Top Button */}
       <Link
         href={'#frmTodo'}
         className='flex justify-center lg:hidden'>
