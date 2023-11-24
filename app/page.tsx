@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-// import { BASE_URL } from './baseURL';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -45,17 +44,21 @@ const sampleToDos = [
 ];
 
 export default function Home() {
+  // For Conditional Rendering
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isDescending, setIsDescending] = useState(true);
 
+  // All, Pending, and Completed To-Dos
   const [allToDos, setAllToDos] = useState<ToDo[]>([]);
   const [pendingToDos, setPendingToDos] = useState<ToDo[]>([]);
   const [completedToDos, setCompletedToDos] = useState<ToDo[]>([]);
 
+  // For Creating New To-Do
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
+  // For Editing Existing To-Do
   const [toBeEdited, setToBeEdited] = useState({
     id: 0,
     title: '',
@@ -63,6 +66,7 @@ export default function Home() {
     completed: false,
   });
 
+  // For Error Messages
   const [error, setError] = useState<string>('');
 
   // Create To-Do - Add new to-do entry
@@ -74,7 +78,6 @@ export default function Home() {
 
     const newToDo = { title, description };
 
-    // const response = await fetch(`${BASE_URL}/api/tasks`, {
     const response = await fetch(`/api/tasks`, {
       method: 'POST',
       headers: {
@@ -110,7 +113,6 @@ export default function Home() {
       return;
     }
 
-    // const response = await fetch(`${BASE_URL}/api/tasks`, {
     const response = await fetch(`/api/tasks`, {
       method: 'PATCH',
       headers: {
@@ -163,7 +165,6 @@ export default function Home() {
 
   // Delete To-Do - Remove a to-do entry from the database
   const deleteToDo = async (id: number) => {
-    // const response = await fetch(`${BASE_URL}/api/tasks`, {
     const response = await fetch(`/api/tasks`, {
       method: 'DELETE',
       headers: {
@@ -179,7 +180,6 @@ export default function Home() {
 
   // Toggle To-Do - Mark to-do entry as "Completed" or "Pending"
   const toggleToDo = async (markedTodo: ToDo) => {
-    // const response = await fetch(`${BASE_URL}/api/tasks`, {
     const response = await fetch(`/api/tasks`, {
       method: 'PATCH',
       headers: {
@@ -226,7 +226,6 @@ export default function Home() {
   // Fetch the To-Dos whenever there are changes in the list
   useEffect(() => {
     const getToDos = async () => {
-      // await fetch(`${BASE_URL}/api/tasks`)
       await fetch(`/api/tasks`)
         .then((response) => response.json())
         .then((data) => setAllToDos(data.allToDos))
@@ -275,8 +274,11 @@ export default function Home() {
   }, [error]);
 
   return (
-    <main className='w-100 lg:h-100 md:h-fit bg-slate-100 text-black'>
-      <header className='bg-teal-500 h-fit p-3 ps-20'>
+    <main
+      className={`${
+        allToDos.length > 5 ? 'lg:h-100' : 'lg:h-screen'
+      }w-100 md:h-fit text-black`}>
+      <header className='w-full flex lg:justify-start sm:justify-center bg-teal-500 h-fit p-3 lg:ps-20 sm:ps-0'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
             Toodle<span className='text-gray-700'>Doo.</span>
@@ -284,8 +286,8 @@ export default function Home() {
         </Link>
       </header>
 
-      <div className='flex lg:flex-row flex-col-reverse lg:justify-between justify-center lg:items-start items-center p-12'>
-        <div className='lg:w-7/12 md:w-3/4 flex flex-col justify-center items-center md:px-0 lg:px-5 mx-10 md:mt-10 lg:mt-0'>
+      <div className='flex lg:flex-row flex-col-reverse lg:justify-between justify-center lg:items-start items-center p-3 sm:p-7 md:p-12'>
+        <div className='w-full md:w-3/4 lg:w-7/12 flex flex-col justify-center items-center md:px-0 lg:px-5 mx-10 mt-10 lg:mt-0'>
           <div className='w-full'>
             {isLoading &&
             allToDos.length === 0 &&
@@ -401,7 +403,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-7 p-9'>
+        <div className='bg-white shadow-lg lg:w-5/12 flex flex-col justify-center items-center rounded-md mx-1 md:mx-7 p-9'>
           {isEditing ? (
             <div className='text-gray-500'>
               <h3 className='text-gray-700 text-3xl font-semibold mb-3'>
