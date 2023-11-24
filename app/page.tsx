@@ -75,8 +75,7 @@ export default function Home() {
 
     const newToDo = { title, description };
 
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
-      mode: 'no-cors',
+    const response = await fetch('/api/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -111,8 +110,7 @@ export default function Home() {
       return;
     }
 
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
-      mode: 'no-cors',
+    const response = await fetch('/api/tasks', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -164,8 +162,7 @@ export default function Home() {
 
   // Delete To-Do - Remove a to-do entry from the database
   const deleteToDo = async (id: number) => {
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
-      mode: 'no-cors',
+    const response = await fetch('/api/tasks', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -180,8 +177,7 @@ export default function Home() {
 
   // Toggle To-Do - Mark to-do entry as "Completed" or "Pending"
   const toggleToDo = async (markedTodo: ToDo) => {
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
-      mode: 'no-cors',
+    const response = await fetch('/api/tasks', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -227,9 +223,7 @@ export default function Home() {
   // Fetch the To-Dos whenever there are changes in the list
   useEffect(() => {
     const getToDos = async () => {
-      await fetch(`${BASE_URL}/api/tasks`, {
-        mode: 'no-cors',
-      })
+      await fetch('/api/tasks')
         .then((response) => response.json())
         .then((data) => setAllToDos(data.allToDos))
         .catch((error) => console.log(error));
