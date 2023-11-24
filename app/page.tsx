@@ -277,8 +277,8 @@ export default function Home() {
     <main
       className={`${
         allToDos.length > 5 ? 'lg:h-100' : 'lg:h-screen'
-      }w-100 md:h-fit text-black`}>
-      <header className='w-full flex lg:justify-start sm:justify-center bg-teal-500 h-fit p-3 lg:ps-20 sm:ps-0'>
+      } w-100 md:h-fit text-black`}>
+      <header className='w-full flex justify-center lg:justify-start bg-teal-500 h-fit p-3 lg:ps-20 sm:ps-0'>
         <Link href={'/'}>
           <h1 className='text-white text-4xl font-bold border-2 inline px-4'>
             Toodle<span className='text-gray-700'>Doo.</span>
