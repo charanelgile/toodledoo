@@ -16,6 +16,33 @@ type ToDo = {
   completed: boolean;
 };
 
+const sampleToDos = [
+  {
+    id: 123,
+    title: 'Water the plants',
+    description: "Don't forget to water the plants",
+    completed: false,
+  },
+  {
+    id: 124,
+    title: 'Pick up dry cleaning',
+    description: 'Pick up dry cleaning on the way home',
+    completed: true,
+  },
+  {
+    id: 125,
+    title: 'Buy dog food',
+    description: 'Buy Russell his favorite dog food',
+    completed: true,
+  },
+  {
+    id: 126,
+    title: 'Declutter working table',
+    description: '',
+    completed: false,
+  },
+];
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -202,6 +229,10 @@ export default function Home() {
 
     // Get All To-Dos
     getToDos();
+
+    if (allToDos.length === 0) {
+      setAllToDos(sampleToDos);
+    }
 
     // Isolate the Pending To-Dos
     if (isDescending) {
