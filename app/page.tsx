@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BASE_URL } from './baseURL';
+// import { BASE_URL } from './baseURL';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -74,7 +74,8 @@ export default function Home() {
 
     const newToDo = { title, description };
 
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
+    // const response = await fetch(`${BASE_URL}/api/tasks`, {
+    const response = await fetch(`/api/tasks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -109,7 +110,8 @@ export default function Home() {
       return;
     }
 
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
+    // const response = await fetch(`${BASE_URL}/api/tasks`, {
+    const response = await fetch(`/api/tasks`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +163,8 @@ export default function Home() {
 
   // Delete To-Do - Remove a to-do entry from the database
   const deleteToDo = async (id: number) => {
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
+    // const response = await fetch(`${BASE_URL}/api/tasks`, {
+    const response = await fetch(`/api/tasks`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +179,8 @@ export default function Home() {
 
   // Toggle To-Do - Mark to-do entry as "Completed" or "Pending"
   const toggleToDo = async (markedTodo: ToDo) => {
-    const response = await fetch(`${BASE_URL}/api/tasks`, {
+    // const response = await fetch(`${BASE_URL}/api/tasks`, {
+    const response = await fetch(`/api/tasks`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -222,7 +226,8 @@ export default function Home() {
   // Fetch the To-Dos whenever there are changes in the list
   useEffect(() => {
     const getToDos = async () => {
-      await fetch(`${BASE_URL}/api/tasks`)
+      // await fetch(`${BASE_URL}/api/tasks`)
+      await fetch(`/api/tasks`)
         .then((response) => response.json())
         .then((data) => setAllToDos(data.allToDos))
         .catch((error) => console.log(error));
